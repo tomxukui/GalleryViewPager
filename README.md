@@ -17,7 +17,7 @@ allprojects {
 Add the dependency
 ```xml
 dependencies {
-	        compile 'com.github.RainbleNi:GalleryViewPager:0.0.5'
+	        compile 'com.github.RainbleNi:GalleryViewPager:2.0.0'
 	}
 ```
 
