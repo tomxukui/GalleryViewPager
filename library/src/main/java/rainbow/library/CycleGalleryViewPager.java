@@ -17,7 +17,6 @@ import android.support.annotation.DrawableRes;
 import android.support.v4.os.ParcelableCompat;
 import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.AccessibilityDelegateCompat;
-import android.support.v4.view.KeyEventCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.VelocityTrackerCompat;
@@ -44,6 +43,7 @@ import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,23 +51,22 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- *
  * 在GalleryViewPager的基础上加入了循环功能
- *
+ * <p>
  * 下面是循环特性的介绍
- *
+ * <p>
  * 在原生Viewpager的基础上进行修改, 为了达到循环的效果, 左右都扩展了延伸位,使其position可以小于0,或者>=count,并且在SCROLL_STATE_IDLE
  * 时将其矫正,防治其位置以及偏移量等参数无限扩大至Integer的极限.
  * 其中加入了view的缓存机制,尽可能在循环滑动的过程中减少instance和destroy. 在默认的RecycleMode下,每页的item保证只会instance一次.
  * 最小化开销.
- *
+ * <p>
  * 关键参数
- *
+ * <p>
  * CYCLE_POSITION_EXTEND 循环时位置延伸量
- *
- *
+ * <p>
+ * <p>
  * 添加方法
- *
+ * <p>
  * setRecycleMode 让用户选择是否在该destroyItem的时候将其回收掉,一般来说轮播图无需回收.
  * setNextItem 跳转到下一页,轮播时由于index是增大后在变成初始值这样循环的,所以跳转下一页建议用此函数
  * setPrivItem 跳转到上一页
@@ -92,7 +91,7 @@ public class CycleGalleryViewPager extends ViewGroup {
      */
     private static final int CYCLE_POSITION_EXTEND = 2;
 
-    private static final int[] LAYOUT_ATTRS = new int[] {
+    private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.layout_gravity
     };
 
@@ -118,7 +117,7 @@ public class CycleGalleryViewPager extends ViewGroup {
         public boolean mHasChangeChild = false;
     }
 
-    private static final Comparator<ItemInfo> COMPARATOR = new Comparator<ItemInfo>(){
+    private static final Comparator<ItemInfo> COMPARATOR = new Comparator<ItemInfo>() {
         @Override
         public int compare(ItemInfo lhs, ItemInfo rhs) {
             return lhs.position - rhs.position;
@@ -284,7 +283,7 @@ public class CycleGalleryViewPager extends ViewGroup {
      * A PageTransformer is invoked whenever a visible/attached page is scrolled.
      * This offers an opportunity for the application to apply a custom transformation
      * to the page views using animation properties.
-     *
+     * <p>
      * <p>As property animation is only supported as of Android 3.0 and forward,
      * setting a PageTransformer on a ViewPager on earlier platform versions will
      * be ignored.</p>
@@ -293,7 +292,7 @@ public class CycleGalleryViewPager extends ViewGroup {
         /**
          * Apply a property transformation to the given page.
          *
-         * @param page Apply the transformation to this page
+         * @param page     Apply the transformation to this page
          * @param position Position of page relative to the current front-and-center
          *                 position of the pager. 0 is front and center. 1 is one full
          *                 page position to the right, and -1 is one page position to the left.
@@ -312,7 +311,8 @@ public class CycleGalleryViewPager extends ViewGroup {
      * Used internally to tag special types of child views that should be added as
      * pager decorations by default.
      */
-    interface Decor {}
+    interface Decor {
+    }
 
     public CycleGalleryViewPager(Context context) {
         super(context);
@@ -420,7 +420,7 @@ public class CycleGalleryViewPager extends ViewGroup {
 
         // author added: 当SCROLL_STATE_IDLE时矫正位置到正常的位置.为了滑动效果所加上的延伸位都是非正常位
         int count = mAdapter.getCount();
-        if (mScrollState == SCROLL_STATE_IDLE && (mCurItem < 0 || mCurItem >= count )) {
+        if (mScrollState == SCROLL_STATE_IDLE && (mCurItem < 0 || mCurItem >= count)) {
             int newItem = getRealPosition(mCurItem, count);
             //setCurrentItemInternal(newItem, false, false);
 
@@ -533,7 +533,7 @@ public class CycleGalleryViewPager extends ViewGroup {
     /**
      * Set the currently selected page.
      *
-     * @param item Item index to select
+     * @param item         Item index to select
      * @param smoothScroll True to smoothly scroll to the new item, false to transition immediately
      */
     public void setCurrentItem(int item, boolean smoothScroll) {
@@ -569,7 +569,7 @@ public class CycleGalleryViewPager extends ViewGroup {
             // We are doing a jump by more than one page.  To avoid
             // glitches, we want to keep all current pages in the view
             // until the scroll ends.
-            for (int i=0; i<mItems.size(); i++) {
+            for (int i = 0; i < mItems.size(); i++) {
                 mItems.get(i).scrolling = true;
             }
         }
@@ -618,7 +618,6 @@ public class CycleGalleryViewPager extends ViewGroup {
      * scrolled. See {@link OnPageChangeListener}.
      *
      * @param listener Listener to set
-     *
      * @deprecated Use {@link #addOnPageChangeListener(OnPageChangeListener)}
      * and {@link #removeOnPageChangeListener(OnPageChangeListener)} instead.
      */
@@ -630,7 +629,7 @@ public class CycleGalleryViewPager extends ViewGroup {
     /**
      * Add a listener that will be invoked whenever the page changes or is incrementally
      * scrolled. See {@link OnPageChangeListener}.
-     *
+     * <p>
      * <p>Components that add a listener should take care to remove it when finished.
      * Other components that take ownership of a view may call {@link #clearOnPageChangeListeners()}
      * to remove all attached listeners.</p>
@@ -669,13 +668,13 @@ public class CycleGalleryViewPager extends ViewGroup {
      * Set a {@link PageTransformer} that will be called for each attached page whenever
      * the scroll position is changed. This allows the application to apply custom property
      * transformations to each page, overriding the default sliding look and feel.
-     *
+     * <p>
      * <p><em>Note:</em> Prior to Android 3.0 the property animation APIs did not exist.
      * As a result, setting a PageTransformer prior to Android 3.0 (API 11) will have no effect.</p>
      *
      * @param reverseDrawingOrder true if the supplied PageTransformer requires page views
      *                            to be drawn from last to first instead of first to last.
-     * @param transformer PageTransformer that will modify each page's animation properties
+     * @param transformer         PageTransformer that will modify each page's animation properties
      */
     public void setPageTransformer(boolean reverseDrawingOrder, PageTransformer transformer) {
         if (Build.VERSION.SDK_INT >= 11) {
@@ -697,7 +696,7 @@ public class CycleGalleryViewPager extends ViewGroup {
             if (mSetChildrenDrawingOrderEnabled == null) {
                 try {
                     mSetChildrenDrawingOrderEnabled = ViewGroup.class.getDeclaredMethod(
-                            "setChildrenDrawingOrderEnabled", new Class[] { Boolean.TYPE });
+                            "setChildrenDrawingOrderEnabled", new Class[]{Boolean.TYPE});
                 } catch (NoSuchMethodException e) {
                     Log.e(TAG, "Can't find setChildrenDrawingOrderEnabled", e);
                 }
@@ -744,14 +743,14 @@ public class CycleGalleryViewPager extends ViewGroup {
      * Set the number of pages that should be retained to either side of the
      * current page in the view hierarchy in an idle state. Pages beyond this
      * limit will be recreated from the adapter when needed.
-     *
+     * <p>
      * <p>This is offered as an optimization. If you know in advance the number
      * of pages you will need to support or have lazy-loading mechanisms in place
      * on your pages, tweaking this setting can have benefits in perceived smoothness
      * of paging animations and interaction. If you have a small number of pages (3-4)
      * that you can keep active all at once, less time will be spent in layout for
      * newly created view subtrees as the user pages back and forth.</p>
-     *
+     * <p>
      * <p>You should keep this limit low, especially if your pages have complex layouts.
      * This setting defaults to 1.</p>
      *
@@ -854,8 +853,8 @@ public class CycleGalleryViewPager extends ViewGroup {
     /**
      * Like {@link View#scrollBy}, but scroll smoothly instead of immediately.
      *
-     * @param x the number of pixels to scroll by on the X axis
-     * @param y the number of pixels to scroll by on the Y axis
+     * @param x        the number of pixels to scroll by on the X axis
+     * @param y        the number of pixels to scroll by on the Y axis
      * @param velocity the velocity associated with a fling, if applicable. (0 otherwise)
      */
     void smoothScrollTo(int x, int y, int velocity) {
@@ -1114,7 +1113,7 @@ public class CycleGalleryViewPager extends ViewGroup {
         NeedReLayoutValue needRelayout = new NeedReLayoutValue();
         List<ItemInfo> emptyItemInfoList = new ArrayList<>();
         if (curItem == null && N > 0) {
-            curItem = addNewItem(mCurItem, curIndex, needRelayout,  emptyItemInfoList);
+            curItem = addNewItem(mCurItem, curIndex, needRelayout, emptyItemInfoList);
         }
 
         // Fill 3x the available width or up to the number of offscreen
@@ -1127,7 +1126,7 @@ public class CycleGalleryViewPager extends ViewGroup {
                 ItemInfo ii = itemIndex >= 0 ? mItems.get(itemIndex) : null;
                 final int clientWidth = getClientWidth();
                 final float leftWidthNeeded = clientWidth <= 0 ? 0
-                    : 2.f - curItem.widthFactor + (float) getPaddingLeft() / (float) clientWidth;
+                        : 2.f - curItem.widthFactor + (float) getPaddingLeft() / (float) clientWidth;
                 for (int pos = mCurItem - 1; pos >= 0 - CYCLE_POSITION_EXTEND; pos--) {
                     if (extraWidthLeft >= leftWidthNeeded && pos < startPos) {
                         if (ii == null) {
@@ -1141,7 +1140,7 @@ public class CycleGalleryViewPager extends ViewGroup {
                             //mAdapter.destroyItem(this, pos, ii.object);
                             if (DEBUG) {
                                 Log.i(TAG, "populate() - destroyItem() with pos: " + pos +
-                                    " view: " + ((View) ii.object));
+                                        " view: " + ((View) ii.object));
                             }
                             itemIndex--;
                             curIndex--;
@@ -1164,7 +1163,7 @@ public class CycleGalleryViewPager extends ViewGroup {
                 if (extraWidthRight < 2.f) {
                     ii = itemIndex < mItems.size() ? mItems.get(itemIndex) : null;
                     final float rightWidthNeeded =
-                        clientWidth <= 0 ? 0 : (float) getPaddingRight() / (float) clientWidth + 2.f;
+                            clientWidth <= 0 ? 0 : (float) getPaddingRight() / (float) clientWidth + 2.f;
                     for (int pos = mCurItem + 1; pos < N + CYCLE_POSITION_EXTEND; pos++) {
                         if (extraWidthRight >= rightWidthNeeded && pos > endPos) {
                             if (ii == null) {
@@ -1178,7 +1177,7 @@ public class CycleGalleryViewPager extends ViewGroup {
                                 //mAdapter.destroyItem(this, pos, ii.object);
                                 if (DEBUG) {
                                     Log.i(TAG, "populate() - destroyItem() with pos: " + pos +
-                                        " view: " + ((View) ii.object));
+                                            " view: " + ((View) ii.object));
                                 }
                                 ii = itemIndex < mItems.size() ? mItems.get(itemIndex) : null;
                             }
@@ -1213,7 +1212,7 @@ public class CycleGalleryViewPager extends ViewGroup {
                             removeView((View) info.object);
                         } else {
                             throw new IllegalArgumentException(
-                                "please ensure instanceItem return View or setRecycleMode(true)");
+                                    "please ensure instanceItem return View or setRecycleMode(true)");
                         }
                     }
                 }
@@ -1224,7 +1223,7 @@ public class CycleGalleryViewPager extends ViewGroup {
 
         if (DEBUG) {
             Log.i(TAG, "Current page list:");
-            for (int i=0; i<mItems.size(); i++) {
+            for (int i = 0; i < mItems.size(); i++) {
                 Log.i(TAG, "#" + i + ": page " + mItems.get(i).position);
             }
         }
@@ -1255,7 +1254,7 @@ public class CycleGalleryViewPager extends ViewGroup {
             View currentFocused = findFocus();
             ItemInfo itemInfo = currentFocused != null ? infoForAnyChild(currentFocused) : null;
             if (itemInfo == null || itemInfo.position != mCurItem) {
-                for (int i=0; i<getChildCount(); i++) {
+                for (int i = 0; i < getChildCount(); i++) {
                     View child = getChildAt(i);
                     itemInfo = infoForChild(child);
                     if (itemInfo != null && itemInfo.position == mCurItem) {
@@ -1444,7 +1443,7 @@ public class CycleGalleryViewPager extends ViewGroup {
             return;
         }
 
-        SavedState ss = (SavedState)state;
+        SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
 
         if (mAdapter != null) {
@@ -1493,7 +1492,7 @@ public class CycleGalleryViewPager extends ViewGroup {
     }
 
     ItemInfo infoForChild(View child) {
-        for (int i=0; i<mItems.size(); i++) {
+        for (int i = 0; i < mItems.size(); i++) {
             ItemInfo ii = mItems.get(i);
             if (mAdapter.isViewFromObject(child, ii.object)) {
                 return ii;
@@ -1504,11 +1503,11 @@ public class CycleGalleryViewPager extends ViewGroup {
 
     ItemInfo infoForAnyChild(View child) {
         ViewParent parent;
-        while ((parent=child.getParent()) != this) {
+        while ((parent = child.getParent()) != this) {
             if (parent == null || !(parent instanceof View)) {
                 return null;
             }
-            child = (View)parent;
+            child = (View) parent;
         }
         return infoForChild(child);
     }
@@ -1819,9 +1818,9 @@ public class CycleGalleryViewPager extends ViewGroup {
      * (e.g. super.onPageScrolled(position, offset, offsetPixels)) before onPageScrolled
      * returns.
      *
-     * @param position Position index of the first page currently being displayed.
-     *                 Page position+1 will be visible if positionOffset is nonzero.
-     * @param offset Value from [0, 1) indicating the offset from the page at position.
+     * @param position     Position index of the first page currently being displayed.
+     *                     Page position+1 will be visible if positionOffset is nonzero.
+     * @param offset       Value from [0, 1) indicating the offset from the page at position.
      * @param offsetPixels Value in pixels indicating the offset from position.
      */
     @CallSuper
@@ -1877,7 +1876,7 @@ public class CycleGalleryViewPager extends ViewGroup {
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             if (lp.isDecor) continue;
             int centerDistance = Math.abs(child.getLeft() - currentItemLeft);
-            float scaleValue =  1 - centerDistance * distanceNarrowFactor;
+            float scaleValue = 1 - centerDistance * distanceNarrowFactor;
             if (scaleValue < 0) {
                 scaleValue = 0;
             }
@@ -1904,6 +1903,7 @@ public class CycleGalleryViewPager extends ViewGroup {
     }
 
     private float mDistanceNarrowFactor = -1;
+
     private float getDistanceNarrowFactor() {
         if (mDistanceNarrowFactor < 0) {
             if (mAdapter == null) {
@@ -1987,7 +1987,7 @@ public class CycleGalleryViewPager extends ViewGroup {
             }
         }
         mPopulatePending = false;
-        for (int i=0; i<mItems.size(); i++) {
+        for (int i = 0; i < mItems.size(); i++) {
             ItemInfo ii = mItems.get(i);
             if (ii.scrolling) {
                 needPopulate = true;
@@ -2055,9 +2055,9 @@ public class CycleGalleryViewPager extends ViewGroup {
                  */
 
                 /*
-                * Locally do absolute value. mLastMotionY is set to the y value
-                * of the down event.
-                */
+                 * Locally do absolute value. mLastMotionY is set to the y value
+                 * of the down event.
+                 */
                 final int activePointerId = mActivePointerId;
                 if (activePointerId == INVALID_POINTER) {
                     // If we don't have a valid id, the touch down wasn't on content.
@@ -2207,7 +2207,8 @@ public class CycleGalleryViewPager extends ViewGroup {
                     final float xDiff = Math.abs(x - mLastMotionX);
                     final float y = MotionEventCompat.getY(ev, pointerIndex);
                     final float yDiff = Math.abs(y - mLastMotionY);
-                    if (DEBUG) Log.v(TAG, "Moved x to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
+                    if (DEBUG)
+                        Log.v(TAG, "Moved x to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
                     if (xDiff > mTouchSlop && xDiff > yDiff) {
                         if (DEBUG) Log.v(TAG, "Starting drag!");
                         mIsBeingDragged = true;
@@ -2346,7 +2347,7 @@ public class CycleGalleryViewPager extends ViewGroup {
 
     /**
      * @return Info about the page at the current scroll position.
-     *         This can be synthetic for a missing middle page; the 'object' field can be null.
+     * This can be synthetic for a missing middle page; the 'object' field can be null.
      */
     private ItemInfo infoForCurrentScrollPosition() {
         final int width = getClientWidth();
@@ -2498,18 +2499,17 @@ public class CycleGalleryViewPager extends ViewGroup {
 
     /**
      * Start a fake drag of the pager.
-     *
+     * <p>
      * <p>A fake drag can be useful if you want to synchronize the motion of the ViewPager
      * with the touch scrolling of another view, while still letting the ViewPager
      * control the snapping motion and fling behavior. (e.g. parallax-scrolling tabs.)
      * Call {@link #fakeDragBy(float)} to simulate the actual drag motion. Call
      * {@link #endFakeDrag()} to complete the fake drag and fling as necessary.
-     *
+     * <p>
      * <p>During a fake drag the ViewPager will ignore all touch events. If a real drag
      * is already in progress, this method will return false.
      *
      * @return true if the fake drag began successfully, false if it could not be started.
-     *
      * @see #fakeDragBy(float)
      * @see #endFakeDrag()
      */
@@ -2621,7 +2621,6 @@ public class CycleGalleryViewPager extends ViewGroup {
      * Returns true if a fake drag is in progress.
      *
      * @return true if currently in a fake drag, false otherwise.
-     *
      * @see #beginFakeDrag()
      * @see #fakeDragBy(float)
      * @see #endFakeDrag()
@@ -2689,12 +2688,12 @@ public class CycleGalleryViewPager extends ViewGroup {
     /**
      * Tests scrollability within child views of v given a delta of dx.
      *
-     * @param v View to test for horizontal scrollability
+     * @param v      View to test for horizontal scrollability
      * @param checkV Whether the view v passed should itself be checked for scrollability (true),
      *               or just its children (false).
-     * @param dx Delta scrolled in pixels
-     * @param x X coordinate of the active touch point
-     * @param y Y coordinate of the active touch point
+     * @param dx     Delta scrolled in pixels
+     * @param x      X coordinate of the active touch point
+     * @param y      Y coordinate of the active touch point
      * @return true if child views of v can be scrolled by delta of dx.
      */
     protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
@@ -2748,9 +2747,9 @@ public class CycleGalleryViewPager extends ViewGroup {
                     if (Build.VERSION.SDK_INT >= 11) {
                         // The focus finder had a bug handling FOCUS_FORWARD and FOCUS_BACKWARD
                         // before Android 3.0. Ignore the tab key on those devices.
-                        if (KeyEventCompat.hasNoModifiers(event)) {
+                        if (event.hasNoModifiers()) {
                             handled = arrowScroll(FOCUS_FORWARD);
-                        } else if (KeyEventCompat.hasModifiers(event, KeyEvent.META_SHIFT_ON)) {
+                        } else if (event.hasModifiers(KeyEvent.META_SHIFT_ON)) {
                             handled = arrowScroll(FOCUS_BACKWARD);
                         }
                     }
@@ -2854,15 +2853,15 @@ public class CycleGalleryViewPager extends ViewGroup {
 
     boolean pageLeft() {
         if (mCurItem > 0) {
-            setCurrentItem(mCurItem-1, true);
+            setCurrentItem(mCurItem - 1, true);
             return true;
         }
         return false;
     }
 
     boolean pageRight() {
-        if (mAdapter != null && mCurItem < (mAdapter.getCount()-1)) {
-            setCurrentItem(mCurItem+1, true);
+        if (mAdapter != null && mCurItem < (mAdapter.getCount() - 1)) {
+            setCurrentItem(mCurItem + 1, true);
             return true;
         }
         return false;
@@ -3008,6 +3007,7 @@ public class CycleGalleryViewPager extends ViewGroup {
     }
 
     private float mItemOffset = -1;
+
     private float getItemOffset() {
         if (mItemOffset > 0) {
             return mItemOffset;
@@ -3070,13 +3070,15 @@ public class CycleGalleryViewPager extends ViewGroup {
                         setCurrentItem(mCurItem + 1);
                         return true;
                     }
-                } return false;
+                }
+                return false;
                 case AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD: {
                     if (canScrollHorizontally(-1)) {
                         setCurrentItem(mCurItem - 1);
                         return true;
                     }
-                } return false;
+                }
+                return false;
             }
             return false;
         }
@@ -3091,6 +3093,7 @@ public class CycleGalleryViewPager extends ViewGroup {
         public void onChanged() {
             dataSetChanged();
         }
+
         @Override
         public void onInvalidated() {
             dataSetChanged();
@@ -3304,6 +3307,7 @@ public class CycleGalleryViewPager extends ViewGroup {
 
     /**
      * author added: 让用户选择是否在该destroyItem的时候将其回收掉,一般来说轮播图无需回收.
+     *
      * @param destroyItemWhenNeeded 默认为false
      */
     public void setRecycleMode(boolean destroyItemWhenNeeded) {
